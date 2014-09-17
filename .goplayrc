@@ -1,0 +1,3 @@
+ForceCompile Yes
+CompleteBuild Yes
+GoplayDirectory /tmp/.goplay_bin/general_report

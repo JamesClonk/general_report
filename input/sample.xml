@@ -1,0 +1,86 @@
+<report>
+    <query>
+        <output>
+            <csv mail="true" temporary="true">test.csv</csv>
+            <xls mail="true" temporary="false" sheetname="Data_{DATE}" autofilter="true">test1_{DATE}.xls</xls>
+            <csv>test2_{TIME}.csv</csv>
+            <screen mail="true">STDOUT</screen>
+            <screen>STDERR</screen>
+        </output>
+        <email send_empty_report="false">
+            <to>report.needy.person@localhost.localdomain</to>
+            <from>report.creator.person@localhost.localdomain</from>
+            <!--<cc>report.archive.person@localhost.localdomain</cc>-->
+            <!--<subject>Report - data for you!</subject>-->
+            <!--<body>Here's your report!</body>-->
+        </email>
+        <connection>
+            <db_name>(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=localhost)(PORT=1521)))(CONNECT_DATA=(SID=XE)(SERVER=SHARED)))</db_name>
+            <db_user>USERNAME</db_user>
+            <db_password>PASSWORD</db_password>
+        </connection>
+        <range>
+            <start>1</start>
+            <stepsize>50</stepsize>
+            <steps>100</steps>
+            <parallel>10</parallel>
+            <bindvar_start>RANGE_START</bindvar_start>
+            <bindvar_end>RANGE_END</bindvar_end>
+        </range>
+        <header>
+           CUSTOMER_ID;CUSTOMER_NAME;CUSTOMER_BIRTHDATE
+        </header>
+        <delimiter>;</delimiter>
+        <statement>
+            <![CDATA[
+            select
+                customer_id
+                customer_name
+                customer_birthdate
+            from customer_table
+            where customer_id between :RANGE_START and :RANGE_END
+            ]]>
+        </statement>
+    </query>
+    <query>
+        <header>
+            CUSTOMER_ID;CUSTOMER_NAME
+        </header>
+        <connection>
+            <db_name>(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=localhost)(PORT=1521)))(CONNECT_DATA=(SID=XE)(SERVER=DEDICATED)))</db_name>
+            <db_user>USERNAME</db_user>
+            <db_password>PASSWORD</db_password>
+        </connection>
+        <statement>
+            <![CDATA[
+            select
+                customer_id
+                customer_name
+            from customer_table
+            where rownum < 10
+            ]]>
+        </statement>
+    </query>
+    <query>
+        <output>
+            <screen>STDERR</screen>
+            <csv mail="true">test3_{DATETIME}.csv</csv>
+            <csv temporary="false">test4_{TIMESTAMP}.csv</csv>
+            <xls mail="true" temporary="true" sheetname="Data_{DATE}" autofilter="true">test2_{DATE}.xls</xls>
+        </output>
+        <connection>
+            <db_name>(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=localhost)(PORT=1521)))(CONNECT_DATA=(SID=XE)(SERVER=DEDICATED)))</db_name>
+            <db_user>USERNAME</db_user>
+            <db_password>PASSWORD</db_password>
+        </connection>
+        <statement>
+            <![CDATA[
+            select
+                customer_id
+                customer_name
+            from customer_table
+            where customer_id between 1 and 100
+            ]]>
+        </statement>
+    </query>
+</report>
